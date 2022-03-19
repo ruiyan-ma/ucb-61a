@@ -35,6 +35,11 @@ def product(n, term):
     162
     """
     "*** YOUR CODE HERE ***"
+    num, prod = 1, 1
+    while num <= n:
+        prod *= term(num)
+        num += 1
+    return prod
 
 
 def accumulate(combiner, base, n, term):
@@ -60,6 +65,12 @@ def accumulate(combiner, base, n, term):
     16
     """
     "*** YOUR CODE HERE ***"
+    result = base
+    num = 1
+    while num <= n:
+        result = combiner(result, term(num))
+        num += 1
+    return result
 
 
 def summation_using_accumulate(n, term):
@@ -77,6 +88,7 @@ def summation_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    return accumulate(add, 0, n, term)
 
 
 def product_using_accumulate(n, term):
@@ -93,6 +105,7 @@ def product_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    return accumulate(mul, 1, n, term)
 
 
 def compose1(func1, func2):
@@ -118,6 +131,11 @@ def make_repeater(func, n):
     5
     """
     "*** YOUR CODE HERE ***"
+    def term(x): return func
+    # in accumulate method, we invoke term(num) in the loop
+    # if term = func, then term(num) = func(num), which is a int
+    # if term(x) = func, then we can compose func correctly
+    return accumulate(compose1, identity, n, term)
 
 
 def zero(f):
@@ -186,4 +204,3 @@ def pow_church(m, n):
     9
     """
     "*** YOUR CODE HERE ***"
-
