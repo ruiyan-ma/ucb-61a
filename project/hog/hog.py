@@ -116,7 +116,7 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     feral_hogs: A boolean indicating whether the feral hogs rule should be active.
     """
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
-    # BEGIN PROBLEM 5
+    # BEGIN PROBLEM 5 and 6
     prev_points = [0, 0]
     scores = [score0, score1]
     strategies = (strategy0, strategy1)
@@ -146,13 +146,14 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
         else:
             scores[who] = player_score
 
+        # commentary function
+        say = say(scores[0], scores[1])
+
         # switch players
         who = other(who)
-    # END PROBLEM 5
 
-    # BEGIN PROBLEM 6
-    # END PROBLEM 6
     return scores[0], scores[1]
+    # END PROBLEM 5 and 6
 
 
 #######################
@@ -238,7 +239,17 @@ def announce_highest(who, last_score=0, running_high=0):
     """
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
-    "*** YOUR CODE HERE ***"
+
+    def say(score0, score1):
+        curr_score = score0 if who == 0 else score1
+        points = curr_score - last_score
+        if points > running_high:
+            print(points, "point(s)! That's the "
+                  + "biggest gain yet for Player", who)
+        new_running_high = max(points, running_high)
+        return announce_highest(who, curr_score, new_running_high)
+
+    return say
     # END PROBLEM 7
 
 
