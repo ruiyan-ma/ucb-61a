@@ -11,7 +11,6 @@ def pascal(row, column):
     >>> pascal(3, 2)	# Row 4 (1 3 3 1), 3rd entry
     3
     """
-    "*** YOUR CODE HERE ***"
     if column > row:
         return 0
     elif column == 0 or row == column:
@@ -46,7 +45,6 @@ def repeated(f, n):
     ...       ['For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
     if n == 0:
         return lambda x: x
     else:
@@ -74,7 +72,6 @@ def num_eights(x):
     ...       ['Assign', 'AugAssign'])
     True
     """
-    "*** YOUR CODE HERE ***"
     if x == 0:
         return 0
     elif x % 10 == 8:
@@ -115,7 +112,6 @@ def pingpong(n):
     >>> check(HW_SOURCE_FILE, 'pingpong', ['Assign', 'AugAssign'])
     True
     """
-    "*** YOUR CODE HERE ***"
     def helper(index, value, direction):
         if index == n:
             # base case: hit the goal

@@ -126,7 +126,6 @@ def hailstone(x):
     >>> a
     7
     """
-    "*** YOUR CODE HERE ***"
     result = 1
     print(x)
 

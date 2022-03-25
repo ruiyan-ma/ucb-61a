@@ -34,7 +34,6 @@ def product(n, term):
     >>> product(3, triple)    # 1*3 * 2*3 * 3*3
     162
     """
-    "*** YOUR CODE HERE ***"
     num, prod = 1, 1
     while num <= n:
         prod *= term(num)
@@ -64,7 +63,6 @@ def accumulate(combiner, base, n, term):
     >>> accumulate(lambda x, y: (x + y) % 17, 19, 20, square)
     16
     """
-    "*** YOUR CODE HERE ***"
     result = base
     num = 1
     while num <= n:
@@ -87,7 +85,6 @@ def summation_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
     return accumulate(add, 0, n, term)
 
 
@@ -104,7 +101,6 @@ def product_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
     return accumulate(mul, 1, n, term)
 
 
@@ -130,7 +126,6 @@ def make_repeater(func, n):
     >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times!
     5
     """
-    "*** YOUR CODE HERE ***"
     def term(x): return func
     # in accumulate method, we invoke term(num) in the loop
     # if term = func, then term(num) = func(num), which is a int

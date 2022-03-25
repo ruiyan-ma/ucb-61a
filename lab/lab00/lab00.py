@@ -6,4 +6,3 @@ def twenty_twenty():
     2020
     """
     return 2 * 1000 + 2 * 10
-

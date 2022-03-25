@@ -22,7 +22,6 @@ def composer(func=lambda x: x):
     9
     """
     def func_adder(g):
-        "*** YOUR CODE HERE ***"
         # when calling func_adder, python finds func from the parent frame,
         # which is the composer frame with the previous h functoin as the
         # argument.
@@ -49,7 +48,6 @@ def g(n):
     >>> check(HW_SOURCE_FILE, 'g', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
     if n <= 3:
         return n
     return g(n - 1) + 2 * g(n - 2) + 3 * g(n - 3)
@@ -73,7 +71,6 @@ def g_iter(n):
     >>> check(HW_SOURCE_FILE, 'g_iter', ['Recursion'])
     True
     """
-    "*** YOUR CODE HERE ***"
     if n <= 3:
         return n
     # 定义动规数组
@@ -111,7 +108,6 @@ def missing_digits(n):
     >>> check(HW_SOURCE_FILE, 'missing_digits', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
     # from the right side to the left side
     # check two digits each time
 
