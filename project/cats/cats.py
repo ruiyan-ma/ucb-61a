@@ -120,42 +120,33 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    def recursive_diff(start, goal, diff):
-        if diff > limit:
-            return diff
-        elif start == '':
-            return diff + len(goal)
-        elif goal == '':
-            return diff + len(start)
-        elif start[0] != goal[0]:
-            diff += 1
-        return recursive_diff(start[1:], goal[1:], diff)
-
-    return recursive_diff(start, goal, 0)
-    # END PROBLEM 6
+    if limit < 0:  # limit < 0 indicates that # of difference = limit + 1
+        return 0
+    elif len(start) == 0 or len(goal) == 0:
+        return len(goal) + len(start)
+    elif start[0] == goal[0]:
+        return shifty_shifts(start[1:], goal[1:], limit)
+    else:
+        return 1 + shifty_shifts(start[1:], goal[1:], limit - 1)
+        # END PROBLEM 6
 
 
 def meowstake_matches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
-
-    if ______________:  # Fill in the condition
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-    elif ___________:  # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
+    # BEGIN PROBLEM 7
+    if limit < 0:  # the number of edits required is greater than limit
+        # limit < 0 indicates that # of edits = limit + 1
+        return 0  # return any number larger than limit
+    elif len(start) == 0 or len(goal) == 0:
+        return len(start) + len(goal)
+    elif start[0] == goal[0]:
+        return meowstake_matches(start[1:], goal[1:], limit)
     else:
-        add_diff = ...  # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+        add_diff = 1 + meowstake_matches(start, goal[1:], limit - 1)
+        remove_diff = 1 + meowstake_matches(start[1:], goal, limit - 1)
+        substitute_diff = 1 + meowstake_matches(start[1:], goal[1:], limit - 1)
+        return min(add_diff, remove_diff, substitute_diff)
+    # END PROBLEM 7
 
 
 def final_diff(start, goal, limit):
