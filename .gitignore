@@ -3,3 +3,5 @@
 .ok_history
 .ok_storage
 __pycache__
+.git
+.idea
