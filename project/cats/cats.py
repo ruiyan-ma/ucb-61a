@@ -69,10 +69,17 @@ def accuracy(typed, reference):
     >>> accuracy('', 'Cute Dog.')
     0.0
     """
+    # BEGIN PROBLEM 3
+    if not typed:
+        return 0.0
     typed_words = split(typed)
     reference_words = split(reference)
-    # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    total, correct = len(typed_words), 0
+    min_num = min(total, len(reference_words))
+    for i in range(min_num):
+        if typed_words[i] == reference_words[i]:
+            correct += 1
+    return correct * 100 / total
     # END PROBLEM 3
 
 
@@ -80,7 +87,8 @@ def wpm(typed, elapsed):
     """Return the words-per-minute (WPM) of the TYPED string."""
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    words = len(typed) / 5
+    return words * 60 / elapsed
     # END PROBLEM 4
 
 
@@ -90,7 +98,19 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     than LIMIT.
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if user_word in valid_words:
+        return user_word
+
+    min_diff, closest = float('inf'), ''
+    for word in valid_words:
+        diff = diff_function(user_word, word, limit)
+        if diff < min_diff:
+            min_diff, closest = diff, word
+
+    if min_diff <= limit:
+        return closest
+    else:
+        return user_word
     # END PROBLEM 5
 
 
@@ -100,7 +120,18 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    def recursive_diff(start, goal, diff):
+        if diff > limit:
+            return diff
+        elif start == '':
+            return diff + len(goal)
+        elif goal == '':
+            return diff + len(start)
+        elif start[0] != goal[0]:
+            diff += 1
+        return recursive_diff(start[1:], goal[1:], diff)
+
+    return recursive_diff(start, goal, 0)
     # END PROBLEM 6
 
 
@@ -310,7 +341,7 @@ def run_typing_test(topics):
         i += 1
 
 
-@main
+@ main
 def run(*args):
     """Read in the command-line argument and calls corresponding functions."""
     import argparse
