@@ -162,7 +162,14 @@ def final_diff(start, goal, limit):
 def report_progress(typed, prompt, id, send):
     """Send a report of your id and progress so far to the multiplayer server."""
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    correct = 0
+    for i in range(len(typed)):
+        if typed[i] != prompt[i]:
+            break
+        correct += 1
+    ratio = correct / len(prompt)
+    send({'id': id, 'progress': ratio})
+    return ratio
     # END PROBLEM 8
 
 
@@ -178,7 +185,8 @@ def fastest_words_report(times_per_player, words):
 
 
 def time_per_word(times_per_player, words):
-    """Given timing data, return a game data abstraction, which contains a list
+    """
+    Given timing data, return a game data abstraction, which contains a list
     of words and the amount of time each player took to type each word.
 
     Arguments:
@@ -188,7 +196,13 @@ def time_per_word(times_per_player, words):
         words: a list of words, in the order they are typed.
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    diff_times = []
+    for player in times_per_player:
+        diff = []
+        for i in range(1, len(player)):
+            diff.append(player[i] - player[i - 1])
+        diff_times.append(diff)
+    return game(words, diff_times)
     # END PROBLEM 9
 
 
