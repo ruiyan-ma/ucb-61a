@@ -207,17 +207,28 @@ def time_per_word(times_per_player, words):
 
 
 def fastest_words(game):
-    """Return a list of lists of which words each player typed fastest.
+    """
+    Return a list of lists of which words each player typed fastest.
 
     Arguments:
         game: a game data abstraction as returned by time_per_word.
     Returns:
         a list of lists containing which words each player typed fastest
     """
-    players = range(len(all_times(game)))  # An index for each player
-    words = range(len(all_words(game)))    # An index for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    fastest_list = [[] for player in all_times(game)]
+
+    for word_index in range(len(all_words(game))):
+        min_time = float('inf')
+        fastest_player = 0
+        for player in range(len(all_times(game))):
+            curr_time = time(game, player, word_index)
+            if curr_time < min_time:
+                min_time = curr_time
+                fastest_player = player
+        fastest_list[fastest_player].append(word_at(game, word_index))
+
+    return fastest_list
     # END PROBLEM 10
 
 
@@ -275,11 +286,22 @@ def key_distance_diff(start, goal, limit):
     """ A diff function that takes into account the distances between keys when
     computing the difference score."""
 
+    # BEGIN PROBLEM EC1
     start = start.lower()  # converts the string to lowercase
     goal = goal.lower()  # converts the string to lowercase
 
-    # BEGIN PROBLEM EC1
-    "*** YOUR CODE HERE ***"
+    if limit < 0:
+        return float('inf')
+    elif len(start) == 0 or len(goal) == 0:
+        return len(start) + len(goal)
+    elif start[0] == goal[0]:
+        return key_distance_diff(start[1:], goal[1:], limit)
+    else:
+        add_diff = 1 + key_distance_diff(start, goal[1:], limit - 1)
+        remove_diff = 1 + key_distance_diff(start[1:], goal, limit - 1)
+        substitute_diff = key_distance[start[0], goal[0]] + \
+            key_distance_diff(start[1:], goal[1:], limit - 1)
+        return min(add_diff, remove_diff, substitute_diff)
     # END PROBLEM EC1
 
 
@@ -301,14 +323,32 @@ key_distance_diff = count(key_distance_diff)
 def faster_autocorrect(user_word, valid_words, diff_function, limit):
     """A memoized version of the autocorrect function implemented above."""
 
-    # BEGIN PROBLEM EC2
-    "*** YOUR CODE HERE ***"
+    # begin problem ec2
+    cache = {}
+
+    if user_word in valid_words:
+        return user_word
+
+    if user_word in cache:
+        return cache[user_word]
+
+    min_diff, closest = float('inf'), ''
+    for word in valid_words:
+        diff = diff_function(user_word, word, limit)
+        if diff < min_diff:
+            min_diff, closest = diff, word
+
+    if min_diff > limit:
+        cache[user_word] = user_word
+    else:
+        cache[user_word] = closest
+
+    return cache[user_word]
     # END PROBLEM EC2
 
-
-##########################
-# Command Line Interface #
-##########################
+    ##########################
+    # Command Line Interface #
+    ##########################
 
 
 def run_typing_test(topics):

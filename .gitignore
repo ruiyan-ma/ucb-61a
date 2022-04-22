@@ -1,7 +1,6 @@
 # ignore
 .DS_Store
-.ok_history
-.ok_storage
+.ok_*
 __pycache__
 .git
 .idea
