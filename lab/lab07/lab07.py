@@ -1,5 +1,6 @@
 def insert_into_all(item, nested_list):
-    """Assuming that nested_list is a list of lists, return a new list
+    """
+    Assuming that nested_list is a list of lists, return a new list
     consisting of all the lists in nested_list, but with item added to
     the front of each.
 
@@ -7,10 +8,13 @@ def insert_into_all(item, nested_list):
     >>> insert_into_all(0, nl)
     [[0], [0, 1, 2], [0, 3]]
     """
-    return ______________________________
+    # do not change the input data
+    return [[item] + li for li in nested_list]
+
 
 def subseqs(s):
-    """Assuming that S is a list, return a nested list of all subsequences
+    """
+    Assuming that S is a list, return a nested list of all subsequences
     of S (a list of lists). The subsequences can appear in any order.
 
     >>> seqs = subseqs([1, 2, 3])
@@ -19,15 +23,19 @@ def subseqs(s):
     >>> subseqs([])
     [[]]
     """
-    if ________________:
-        ________________
+    # tree recursion
+    if not s:
+        return [[]]
     else:
-        ________________
-        ________________
+        # narrow down: create subsequences list for s[1:]
+        remove_first_subseq = subseqs(s[1:])
+        # insert s[0] + not insert s[0]
+        return remove_first_subseq + insert_into_all(s[0], remove_first_subseq)
 
 
 def inc_subseqs(s):
-    """Assuming that S is a list, return a nested list of all subsequences
+    """
+    Assuming that S is a list, return a nested list of all subsequences
     of S (a list of lists) for which the elements of the subsequence
     are strictly nondecreasing. The subsequences can appear in any order.
 
@@ -42,14 +50,19 @@ def inc_subseqs(s):
     """
     def subseq_helper(s, prev):
         if not s:
-            return ____________________
+            return [[]]
         elif s[0] < prev:
-            return ____________________
+            # current first element < prev first element
+            return subseq_helper(s[1:], prev)
         else:
-            a = ______________________
-            b = ______________________
-            return insert_into_all(________, ______________) + ________________
-    return subseq_helper(____, ____)
+            # include s[0], now prev = s[0]
+            include = subseq_helper(s[1:], s[0])
+            # exclude s[0], prev does not change
+            exclude = subseq_helper(s[1:], prev)
+            # insert s[0] into include
+            return insert_into_all(s[0], include) + exclude
+
+    return subseq_helper(s, 0)
 
 
 def trade(first, second):
@@ -81,9 +94,11 @@ def trade(first, second):
     """
     m, n = 1, 1
 
-    equal_prefix = lambda: ______________________
-    while _______________________________:
-        if __________________:
+    def equal_prefix():
+        return sum(first[:m]) == sum(second[:n])
+
+    while m <= len(first) and n <= len(second) and not equal_prefix():
+        if sum(first[:m]) < sum(second[:n]):
             m += 1
         else:
             n += 1
@@ -107,7 +122,8 @@ def reverse(lst):
     >>> odd_list
     [-8, 72, 42]
     """
-    "*** YOUR CODE HERE ***"
+    for i in range(len(lst) // 2):
+        lst[i], lst[-1 - i] = lst[-1 - i], lst[i]
 
 
 cs61a = {
@@ -122,6 +138,7 @@ cs61a = {
     "Extra credit": 0
 }
 
+
 def make_glookup(class_assignments):
     """ Returns a function which calculates and returns the current
     grade out of what assignments have been entered so far.
@@ -134,7 +151,20 @@ def make_glookup(class_assignments):
     >>> student1("PJ1", 18)
     0.8913043478260869
     """
-    "*** YOUR CODE HERE ***"
+    grade, total_points = 0, 0
+
+    def update_grade(assignment, point):
+        nonlocal grade, total_points
+        if total_points == 0:
+            grade = point / class_assignments[assignment]
+            total_points += class_assignments[assignment]
+        else:
+            grade = grade * total_points + point
+            total_points += class_assignments[assignment]
+            grade /= total_points
+        return grade
+
+    return update_grade
 
 
 def num_trees(n):
@@ -157,13 +187,14 @@ def num_trees(n):
     429
 
     """
-    if ____________________:
-        return _______________
-    return _______________
+    if n == 1 or n == 2:
+        return 1
+    return num_trees(n-1) * 2 * (2 * n - 3) // n
 
 
 def make_advanced_counter_maker():
-    """Makes a function that makes counters that understands the
+    """
+    Makes a function that makes counters that understands the
     messages "count", "global-count", "reset", and "global-reset".
     See the examples below:
 
@@ -192,12 +223,13 @@ def make_advanced_counter_maker():
     1
     """
     ________________
+
     def ____________(__________):
         ________________
+
         def ____________(__________):
             ________________
             "*** YOUR CODE HERE ***"
             # as many lines as you want
         ________________
     ________________
-
