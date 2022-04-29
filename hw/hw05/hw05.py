@@ -19,7 +19,19 @@ def make_bank(balance):
     120
     """
     def bank(message, amount):
-        "*** YOUR CODE HERE ***"
+        nonlocal balance
+        if message == 'deposit':
+            balance += amount
+            return balance
+        elif message == 'withdraw':
+            if amount > balance:
+                return "Insufficient funds"
+            else:
+                balance -= amount
+                return balance
+        else:
+            return 'Invalid message'
+
     return bank
 
 
@@ -51,12 +63,31 @@ def make_withdraw(balance, password):
     >>> type(w(10, 'l33t')) == str
     True
     """
-    "*** YOUR CODE HERE ***"
+    wrong_passwords = []
+
+    def withdraw(amount, user_password):
+        nonlocal balance, password
+        if len(wrong_passwords) == 3:
+            return "Too many incorrect attempts. Attempts: " + str(
+                wrong_passwords)
+        elif password != user_password:
+            wrong_passwords.append(user_password)
+            return "Incorrect password"
+        else:
+            if amount > balance:
+                return "Insufficient funds"
+            else:
+                balance -= amount
+                return balance
+
+    return withdraw
 
 
 def repeated(t, k):
-    """Return the first value in iterator T that appears K times in a row. Iterate through the items such that
-    if the same iterator is passed into repeated twice, it continues in the second call at the point it left off
+    """
+    Return the first value in iterator T that appears K times in a row.
+    Iterate through the items such that if the same iterator is passed into
+    repeated twice, it continues in the second call at the point it left off
     in the first.
 
     >>> lst = iter([10, 9, 10, 9, 9, 10, 8, 8, 8, 7])
@@ -75,13 +106,22 @@ def repeated(t, k):
     2
     """
     assert k > 1
-    "*** YOUR CODE HERE ***"
+    last_element, times = next(t), 1
+    for e in t:
+        if e == last_element:
+            times += 1
+            if times == k:
+                return e
+        else:
+            times = 1
+            last_element = e
 
 
 def merge(incr_a, incr_b):
-    """Yield the elements of strictly increasing iterables incr_a and incr_b, removing
-    repeats. Assume that incr_a and incr_b have no repeats. incr_a or incr_b may be infinite
-    sequences.
+    """
+    Yield the elements of strictly increasing iterables incr_a and incr_b, removing
+    repeats. Assume that incr_a and incr_b have no repeats. incr_a or incr_b may
+    be infinite sequences.
 
     >>> m = merge([0, 2, 4, 6, 8, 10, 12, 14], [0, 3, 6, 9, 12, 15])
     >>> type(m)
@@ -97,7 +137,24 @@ def merge(incr_a, incr_b):
     """
     iter_a, iter_b = iter(incr_a), iter(incr_b)
     next_a, next_b = next(iter_a, None), next(iter_b, None)
-    "*** YOUR CODE HERE ***"
+    while next_a is not None or next_b is not None:
+        if next_a is None:
+            yield next_b
+            next_b = next(iter_b, None)
+        elif next_b is None:
+            yield next_a
+            next_a = next(iter_a, None)
+        else:
+            if next_a < next_b:
+                yield next_a
+                next_a = next(iter_a, None)
+            elif next_a > next_b:
+                yield next_b
+                next_b = next(iter_b, None)
+            else:
+                yield next_a
+                next_a = next(iter_a, None)
+                next_b = next(iter_b, None)
 
 
 def make_joint(withdraw, old_pass, new_pass):
@@ -138,7 +195,15 @@ def make_joint(withdraw, old_pass, new_pass):
     >>> make_joint(w, 'hax0r', 'hello')
     "Too many incorrect attempts. Attempts: ['my', 'secret', 'password']"
     """
-    "*** YOUR CODE HERE ***"
+    result = withdraw(0, old_pass)
+    if type(result) == str:
+        return result
+
+    def joint_withdraw(amount, password):
+        nonlocal old_pass, new_pass
+        return withdraw(amount, old_pass if password == new_pass else password)
+
+    return joint_withdraw
 
 
 def remainders_generator(m):
@@ -172,7 +237,13 @@ def remainders_generator(m):
     7
     11
     """
-    "*** YOUR CODE HERE ***"
+    def create_generator(remainder):
+        for num in naturals():
+            if num % m == remainder:
+                yield num
+
+    for i in range(m):
+        yield create_generator(i)
 
 
 def naturals():
@@ -189,4 +260,3 @@ def naturals():
     while True:
         yield i
         i += 1
-
