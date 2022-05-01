@@ -80,8 +80,8 @@ class Player:
         >>> len(test_player.hand)
         5
         """
-        self.deck = deck
         self.name = name
+        self.deck = deck
         self.hand = []
         for i in range(5):
             self.hand.append(deck.draw())
@@ -215,11 +215,24 @@ class ProfessorCard(Card):
         0
         """
         orig_opponent_deck_length = len(opponent.deck.cards)
-        "*** YOUR CODE HERE ***"
+        # adds the opponent card's attack and defense to
+        # all cards in the player's deck
+        for card in player.deck.cards:
+            card.attack += other_card.attack
+            card.defense += other_card.defense
+        # removes all cards in the opponent's deck that have
+        # the same attack or defense as the opponent's card.
+        left_cards = []
+        for card in opponent.deck.cards:
+            if card.defense != other_card.defense and card.attack != other_card.attack:
+                left_cards.append(card)
+        opponent.deck.cards = left_cards
+
         discarded = orig_opponent_deck_length - len(opponent.deck.cards)
         if discarded:
             # Uncomment the line below when you've finished implementing this method!
-            #print('{} cards were discarded from {}\'s deck!'.format(discarded, opponent.name))
+            print('{} cards were discarded from {}\'s deck!'.format(
+                discarded, opponent.name))
             return
 
     def copy(self):
