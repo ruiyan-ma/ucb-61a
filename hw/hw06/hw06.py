@@ -49,7 +49,44 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
-    "*** YOUR CODE HERE ***"
+    EMPTY = 'Inventory empty. Restocking required.'
+
+    def __init__(self, item, price):
+        self.item = item
+        self.price = price
+        self.amount = 0
+        self.fund = 0
+
+    def vend(self):
+        if self.amount == 0:
+            # inventory empty
+            return VendingMachine.EMPTY
+        elif self.fund < self.price:
+            # inventory filled but fund not enough
+            return 'You must add $' + str(self.price
+                                          - self.fund) + ' more funds.'
+        else:
+            # inventory filled and fund enouth, minus amount
+            # by 1, refund change if fund > price.
+            self.amount -= 1
+            change = self.fund - self.price
+            self.fund = 0
+            if change == 0:
+                return 'Here is your ' + self.item + '.'
+            else:
+                return 'Here is your ' + self.item + ' and $' + str(change) + ' change.'
+
+    def restock(self, amount):
+        self.amount += amount
+        return 'Current ' + self.item + ' stock: ' + str(self.amount)
+
+    def add_funds(self, money):
+        if self.amount == 0:
+            refund = ' Here is your $' + str(money) + '.'
+            return VendingMachine.EMPTY + refund
+        else:
+            self.fund += money
+            return 'Current balance: $' + str(self.fund)
 
 
 class Mint:
@@ -87,20 +124,26 @@ class Mint:
         self.update()
 
     def create(self, kind):
-        "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
-        "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
+
 
 class Coin:
+    cents = 0
+
     def __init__(self, year):
         self.year = year
 
     def worth(self):
-        "*** YOUR CODE HERE ***"
+        time = Mint.current_year - self.year
+        return self.cents + (0 if time < 50 else time - 50)
+
 
 class Nickel(Coin):
     cents = 5
+
 
 class Dime(Coin):
     cents = 10
@@ -131,7 +174,35 @@ def is_bst(t):
     >>> is_bst(t7)
     False
     """
-    "*** YOUR CODE HERE ***"
+    def check_bst(node, low, high):
+        # current node must between low and high
+        if node.label < low or node.label >= high:
+            return False
+
+        # no child: leaf node
+        if node.is_leaf():
+            return True
+        # one child: left child or right child
+        elif len(node.branches) == 1:
+            child = node.branches[0]
+            if child.label <= node.label and not check_bst(child, low, node.label):
+                return False
+            if child.label > node.label and not check_bst(child, node.label, high):
+                return False
+        # two child: left child and right child
+        elif len(node.branches) == 2:
+            left_child = node.branches[0]
+            right_child = node.branches[1]
+            if check_bst(left_child, low, node.label) or check_bst(right_child, node.label, high):
+                return False
+        # more than two child: return False
+        else:
+            return False
+
+        # all conditions passed, return True
+        return True
+
+    return check_bst(t, float('-inf'), float('inf'))
 
 
 def store_digits(n):
@@ -149,7 +220,13 @@ def store_digits(n):
     >>> cleaned = re.sub(r"#.*\\n", '', re.sub(r'"{3}[\s\S]*?"{3}', '', inspect.getsource(store_digits)))
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
-    "*** YOUR CODE HERE ***"
+    def create_link(n, rest):
+        if n < 10:
+            return Link(n, rest)
+        else:
+            return create_link(n // 10, Link(n % 10, rest))
+
+    return create_link(n, Link.empty)
 
 
 def path_yielder(t, value):
@@ -186,16 +263,35 @@ def path_yielder(t, value):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
+    # 1. backtrack
+    # def backtrack(t, curr_result, value):
+    #     # add current label
+    #     curr_result.append(t.label)
+    #     if curr_result[-1] == value:
+    #         result.append(list(curr_result))
 
-    "*** YOUR CODE HERE ***"
+    #     for b in t.branches:
+    #         backtrack(b, curr_result, value)
 
-    for _______________ in _________________:
-        for _______________ in _________________:
+    #     # backtrack: remove last element
+    #     curr_result.pop()
 
-            "*** YOUR CODE HERE ***"
+    # result = []
+    # backtrack(t, [], value)
+    # for path in result:
+    #     yield path
+
+    # 2. recursion
+    # base case
+    if t.label == value:
+        yield [t.label]
+    # recursive calls
+    for b in t.branches:
+        for path in path_yielder(b, value):
+            yield [t.label] + path
 
 
-def remove_all(link , value):
+def remove_all(link, value):
     """Remove all the nodes containing value in link. Assume that the
     first element is never removed.
 
@@ -212,7 +308,13 @@ def remove_all(link , value):
     >>> print(l1)
     <0 1>
     """
-    "*** YOUR CODE HERE ***"
+    sentinel = Link(-1, link)
+    node = sentinel
+    while node.rest != Link.empty:
+        if node.rest.first == value:
+            node.rest = node.rest.rest
+        else:
+            node = node.rest
 
 
 def deep_map(f, link):
@@ -228,7 +330,12 @@ def deep_map(f, link):
     >>> print(deep_map(lambda x: 2 * x, Link(s, Link(Link(Link(5))))))
     <<2 <4 6> 8> <<10>>>
     """
-    "*** YOUR CODE HERE ***"
+    if link == Link.empty:
+        return Link.empty
+    elif isinstance(link.first, Link):
+        return Link(deep_map(f, link.first), deep_map(f, link.rest))
+    else:
+        return Link(f(link.first), deep_map(f, link.rest))
 
 
 class Tree:
@@ -241,6 +348,7 @@ class Tree:
     >>> t.branches[1].is_leaf()
     True
     """
+
     def __init__(self, label, branches=[]):
         for b in branches:
             assert isinstance(b, Tree)
@@ -346,4 +454,3 @@ class Link:
             string += str(self.first) + ' '
             self = self.rest
         return string + str(self.first) + '>'
-
