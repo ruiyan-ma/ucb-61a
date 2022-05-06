@@ -1,6 +1,8 @@
 (define (over-or-under num1 num2)
-  'YOUR-CODE-HERE
-)
+  (if (< num1 num2)
+    -1
+    (if (= num1 num2) 0 1))
+  )
 
 ;;; Tests
 (over-or-under 1 2)
@@ -11,9 +13,16 @@
 ; expect 0
 
 
+; base case: nil
 (define (filter-lst fn lst)
-  'YOUR-CODE-HERE
-)
+  (if (null? lst)
+    nil
+    (if (fn (car lst))
+      (cons (car lst) (filter-lst fn (cdr lst)))
+      (filter-lst fn (cdr lst))
+      )
+    )
+  )
 
 ;;; Tests
 (define (even? x)
@@ -23,8 +32,8 @@
 
 
 (define (make-adder num)
-  'YOUR-CODE-HERE
-)
+  (lambda (inc) (+ num inc))
+  )
 
 ;;; Tests
 (define adder (make-adder 5))
@@ -33,18 +42,24 @@
 
 
 (define lst
-  'YOUR-CODE-HERE
-)
+  (list (list 1) 2 (list 3 4) 5)
+  )
 
 
 (define (composed f g)
-  'YOUR-CODE-HERE
-)
+  (lambda (x) (f (g x)))
+  )
 
 
 (define (remove item lst)
-  'YOUR-CODE-HERE
-)
+  (if (null? lst)
+    nil
+    (if (= item (car lst))
+      (remove item (cdr lst))
+      (cons (car lst) (remove item (cdr lst)))
+      )
+    )
+  )
 
 
 ;;; Tests
@@ -56,17 +71,24 @@
 ; expect (3 1 4 4)
 
 
+; use remove procedure to remove the current item in (cdr s)
 (define (no-repeats s)
-  'YOUR-CODE-HERE
-)
+  (if (null? s)
+    nil
+    (cons
+      (car s)
+      (no-repeats (remove (car s) (cdr s)))
+      )
+    )
+  )
 
 
 (define (substitute s old new)
   'YOUR-CODE-HERE
-)
+  )
 
 
 (define (sub-all s olds news)
   'YOUR-CODE-HERE
-)
+  )
 
