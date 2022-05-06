@@ -84,11 +84,35 @@
 
 
 (define (substitute s old new)
-  'YOUR-CODE-HERE
+  (if (null? s)
+    nil
+    (if (pair? (car s))
+      ; if (car s) is a list, invoke substitute on it
+      (cons (substitute (car s) old new) (substitute (cdr s) old new))
+      ; if (car s) is not a list, check if (car s) == old
+      (if (eq? (car s) old)
+        ; if (car s) == old, replace it with new
+        (cons new (substitute (cdr s) old new))
+        ; else, keep it
+        (cons (car s) (substitute (cdr s) old new))
+        )
+      )
+    )
   )
 
 
 (define (sub-all s olds news)
-  'YOUR-CODE-HERE
+  (if (null? s)
+    nil
+    (if (null? olds)
+      ; if olds is empty, we have replaced all elements
+      s
+      ; else, replace (car olds) with (car news), and recursively invoke
+      ; sub-all on the rest of the list
+      (sub-all
+        (substitute s (car olds) (car news))
+        (cdr olds)
+        (cdr news))
+      )
+    )
   )
-
