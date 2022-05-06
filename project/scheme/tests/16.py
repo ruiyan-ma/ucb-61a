@@ -1,29 +1,25 @@
 test = {
-  'name': 'over-or-under',
+  'name': 'Problem 16',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          scm> (over-or-under 5 5)
-          0
+          scm> (enumerate '(3 4 5 6))
+          ((0 3) (1 4) (2 5) (3 6))
+          scm> (enumerate '(9 8 7 6 5 4))
+          ((0 9) (1 8) (2 7) (3 6) (4 5) (5 4))
           """,
           'hidden': False,
           'locked': False
         },
         {
           'code': r"""
-          scm> (over-or-under 5 4)
-          1
-          """,
-          'hidden': False,
-          'locked': False
-        },
-        {
-          'code': r"""
-          scm> (over-or-under 3 5)
-          -1
+          scm> (enumerate '(a b c d))
+          ((0 a) (1 b) (2 c) (3 d))
+          scm> (enumerate '())
+          ()
           """,
           'hidden': False,
           'locked': False
@@ -31,7 +27,7 @@ test = {
       ],
       'scored': True,
       'setup': r"""
-      scm> (load-all ".")
+      scm> (load 'questions)
       """,
       'teardown': '',
       'type': 'scheme'
