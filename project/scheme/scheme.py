@@ -33,17 +33,17 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         raise SchemeError('malformed list: {0}'.format(repl_str(expr)))
     first, rest = expr.first, expr.rest
     if scheme_symbolp(first) and first in SPECIAL_FORMS:
-        # Evaluate special forms
         return SPECIAL_FORMS[first](rest, env)
     else:
-        # Evaluate a call expression
         # BEGIN PROBLEM 4
-        operator = scheme_eval(first, env)
-        validate_procedure(operator)
-        # The map method of Pair returns a new Scheme list constructed by
-        # applying a one-argument function to every item in a Scheme list.
+        # Evaluate a call expression
+        procedure = scheme_eval(first, env)  # an instance of Procedure
+        validate_procedure(procedure)  # validate that the operator is a procedure
+        # Evaluate each operand: the map method of Pair returns a new Scheme list
+        # constructed by applying a one-argument function to every item in a Scheme list.
         operands = rest.map(lambda arg: scheme_eval(arg, env))
-        return scheme_apply(operator, operands, env)
+        # Apply the procedure and return the result
+        return scheme_apply(procedure, operands, env)
         # END PROBLEM 4
 
 
@@ -171,14 +171,13 @@ class BuiltinProcedure(Procedure):
         # Convert a Scheme list to a Python list
         python_args = []
         # BEGIN PROBLEM 3
-        # convert args to a python list
         while args is not nil:
             python_args.append(args.first)
             args = args.rest
-        # if self.use_env is True, add env to the list
+        # If self.use_env is True, add env to the list
         if self.use_env:
             python_args.append(env)
-        # call self.fn on all of those arguments and return the result
+        # Call fn on all of those arguments using *args notation and return the result
         try:
             return self.fn(*python_args)
         except TypeError:
@@ -264,14 +263,16 @@ def do_define_form(expressions, env):
     validate_form(expressions, 2)  # Checks that expressions is a list of length at least 2
     target = expressions.first
     if scheme_symbolp(target):
+        # Define a symbol
         validate_form(expressions, 2, 2)  # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 5
-        # expressions is a Pair instance, expressions.rest is still a Pair instance
-        # (define a 2) -> expressions = Pair(a, Pair(2, nil))
+        # EXPRESSIONS is a Pair instance
+        # (define a 2) -> EXPRESSIONS = Pair(a, Pair(2, nil))
         env.define(target, scheme_eval(expressions.rest.first, env))
         return target
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
+        # Define a procedure
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
         # END PROBLEM 9
@@ -289,7 +290,8 @@ def do_quote_form(expressions, env):
     """
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
+    # (quote (1 2)) -> EXPRESSIONS = Pair(Pair(1, Pair(2, nil)), nil)
+    return expressions.first
     # END PROBLEM 6
 
 

@@ -147,10 +147,10 @@ def scheme_read(src):
         # END PROBLEM 1
     elif val in quotes:
         # BEGIN PROBLEM 6
-        "*** YOUR CODE HERE ***"
+        # Return Pair('quote', Pair('bagel', nil)) for 'bagel
+        return Pair(quotes[val], Pair(scheme_read(src), nil))
         # END PROBLEM 6
     elif val not in DELIMITERS:
-        # primitive expression
         return val
     else:
         raise SyntaxError('unexpected token: {0}'.format(val))
@@ -176,12 +176,11 @@ def read_tail(src):
             # END PROBLEM 1
         else:
             # BEGIN PROBLEM 1
-            # read the next complete expression in the buffer
+            # Read the next complete expression in the buffer
             first = scheme_read(src)
-            # read the rest of the combination until the matching
-            # closing parenthesis
+            # Read the rest of the combination until the matching closing parenthesis
             rest = read_tail(src)
-            # return the results as a Pair instance
+            # Return the results as a Pair instance
             return Pair(first, rest)
             # END PROBLEM 1
     except EOFError:
