@@ -354,7 +354,7 @@ def do_if_form(expressions, env):
     >>> do_if_form(read_line("(#f (print 2) (print 3))"), env)
     3
     """
-    validate_form(expressions, 2, 3)
+    validate_form(expressions, 2, 3)  # an if statement can have else clause or not
     if is_true_primitive(scheme_eval(expressions.first, env)):
         return scheme_eval(expressions.rest.first, env)
     elif len(expressions) == 3:
@@ -375,7 +375,18 @@ def do_and_form(expressions, env):
     False
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    # No sub-expression: return true
+    if expressions is nil:
+        return True
+    # Evaluate each sub-expression from left to right, if any of them evaluates to
+    # a false value, return false; otherwise, return the value of the last expression.
+    val = nil
+    while expressions is not nil:
+        val = scheme_eval(expressions.first, env)
+        if is_false_primitive(val):
+            return False
+        expressions = expressions.rest
+    return val
     # END PROBLEM 12
 
 
@@ -393,12 +404,33 @@ def do_or_form(expressions, env):
     6
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    # No sub-expression: return False
+    if expressions is nil:
+        return False
+    # Evaluate each sub-expression from left to right, if any of them evaluates to
+    # a true value, return that value; otherwise, return false.
+    while expressions is not nil:
+        val = scheme_eval(expressions.first, env)
+        if is_true_primitive(val):
+            return val
+        expressions = expressions.rest
+    return False
     # END PROBLEM 12
 
 
 def do_cond_form(expressions, env):
     """Evaluate a cond form.
+
+    When the true predicate does not have a corresponding result sub-expression,
+    return the predicate value.
+
+    When a result sub-expression of a cond case has multiple expressions, evaluate
+    them all and return the value of the last expression.
+
+    If there is no ture predicates and no else clause, return None.
+
+    If there is only an else clause, return its sub-expression. If it does not
+    have one, return #t.
 
     >>> do_cond_form(read_line("((#f (print 2)) (#t 3))"), create_global_frame())
     3
@@ -414,7 +446,14 @@ def do_cond_form(expressions, env):
             test = scheme_eval(clause.first, env)
         if is_true_primitive(test):
             # BEGIN PROBLEM 13
-            "*** YOUR CODE HERE ***"
+            if clause.rest is nil:
+                return test
+            # Evaluate all sub-expressions and return the last one
+            result = clause.rest
+            while result.rest is not nil:
+                scheme_eval(result.first, env)
+                result = result.rest
+            return scheme_eval(result.first, env)
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -440,7 +479,14 @@ def make_let_frame(bindings, env):
         raise SchemeError('bad bindings list in let form')
     names, values = nil, nil
     # BEGIN PROBLEM 14
-    "*** YOUR CODE HERE ***"
+    while bindings is not nil:
+        bind_pair = bindings.first
+        validate_form(bind_pair, 2, 2)  # Checks the length of each binding pair is 2
+        names = Pair(bind_pair.first, names)
+        # Evaluate the value expression before add it into values
+        values = Pair(scheme_eval(bind_pair.rest.first, env), values)
+        bindings = bindings.rest
+    validate_formals(names)
     # END PROBLEM 14
     return env.make_child_frame(names, values)
 
@@ -555,6 +601,9 @@ def validate_procedure(procedure):
 
 class MuProcedure(Procedure):
     """A procedure defined by a mu expression, which has dynamic scope.
+
+    A MuProcedure does not need to store an environment as an instance attribute.
+    It can refer to names in the environment from which it was called.
      _________________
     < Scheme is cool! >
      -----------------
@@ -572,8 +621,10 @@ class MuProcedure(Procedure):
         self.body = body
 
     # BEGIN PROBLEM 15
-    "*** YOUR CODE HERE ***"
-
+    def make_call_frame(self, args, env):
+        """Make a frame that binds my formal parameters to ARGS, a Scheme list
+        of values, for a dynamically-scoped call. """
+        return env.make_child_frame(self.formals, args)
     # END PROBLEM 15
 
     def __str__(self):
@@ -589,9 +640,12 @@ def do_mu_form(expressions, env):
     validate_form(expressions, 2)
     formals = expressions.first
     validate_formals(formals)
-    # BEGIN PROBLEM 18
-    "*** YOUR CODE HERE ***"
-    # END PROBLEM 18
+    # BEGIN PROBLEM 15
+    # EXPRESSIONS => (formals body)
+    # Bind formals and body expressions to the mu procedure without evaluating them.
+    # Evaluate them when this procedure is called.
+    return MuProcedure(formals, expressions.rest)
+    # END PROBLEM 15
 
 
 SPECIAL_FORMS['mu'] = do_mu_form
