@@ -137,7 +137,14 @@ class Frame(object):
         <{a: 1, b: 2, c: 3} -> <Global Frame>>
         """
         # BEGIN PROBLEM 10
-        "*** YOUR CODE HERE ***"
+        if len(formals) != len(vals):
+            raise SchemeError("The number of argument values does not match with "
+                              "the number of formal parameters.")
+        new_frame = Frame(self)
+        while formals is not nil:
+            new_frame.define(formals.first, vals.first)
+            formals, vals = formals.rest, vals.rest
+        return new_frame
         # END PROBLEM 10
 
 
@@ -210,7 +217,7 @@ class LambdaProcedure(Procedure):
         """Make a frame that binds my formal parameters to ARGS, a Scheme list
         of values, for a lexically-scoped call evaluated in my parent environment."""
         # BEGIN PROBLEM 11
-        "*** YOUR CODE HERE ***"
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 11
 
     def __str__(self):
@@ -281,7 +288,11 @@ def do_define_form(expressions, env):
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # Define a procedure
         # BEGIN PROBLEM 9
-        "*** YOUR CODE HERE ***"
+        name = target.first
+        procedure_exp = Pair(target.rest, expressions.rest)
+        procedure = do_lambda_form(procedure_exp, env)
+        env.define(name, procedure)
+        return name
         # END PROBLEM 9
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -327,7 +338,9 @@ def do_lambda_form(expressions, env):
     formals = expressions.first
     validate_formals(formals)
     # BEGIN PROBLEM 8
-    # EXPRESSIONS
+    # EXPRESSIONS => (formals body)
+    # Bind formals and body expressions to the lambda procedure without evaluating them.
+    # Evaluate them when this procedure is called.
     return LambdaProcedure(formals, expressions.rest, env)
     # END PROBLEM 8
 
