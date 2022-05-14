@@ -38,7 +38,8 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         # BEGIN PROBLEM 4
         # Evaluate a call expression
         procedure = scheme_eval(first, env)  # an instance of Procedure
-        validate_procedure(procedure)  # validate that the operator is a procedure
+        # validate that the operator is a procedure
+        validate_procedure(procedure)
         # Evaluate each operand: the map method of Pair returns a new Scheme list
         # constructed by applying a one-argument function to every item in a Scheme list.
         operands = rest.map(lambda arg: scheme_eval(arg, env))
@@ -274,11 +275,13 @@ def do_define_form(expressions, env):
     >>> scheme_eval(read_line("(f 3)"), env)
     5
     """
-    validate_form(expressions, 2)  # Checks that expressions is a list of length at least 2
+    validate_form(
+        expressions, 2)  # Checks that expressions is a list of length at least 2
     target = expressions.first
     if scheme_symbolp(target):
         # Define a symbol
-        validate_form(expressions, 2, 2)  # Checks that expressions is a list of length exactly 2
+        # Checks that expressions is a list of length exactly 2
+        validate_form(expressions, 2, 2)
         # BEGIN PROBLEM 5
         # EXPRESSIONS is a Pair instance
         # (define a 2) -> EXPRESSIONS = Pair(a, Pair(2, nil))
@@ -354,7 +357,8 @@ def do_if_form(expressions, env):
     >>> do_if_form(read_line("(#f (print 2) (print 3))"), env)
     3
     """
-    validate_form(expressions, 2, 3)  # an if statement can have else clause or not
+    validate_form(expressions, 2,
+                  3)  # an if statement can have else clause or not
     if is_true_primitive(scheme_eval(expressions.first, env)):
         return scheme_eval(expressions.rest.first, env)
     elif len(expressions) == 3:
@@ -481,7 +485,8 @@ def make_let_frame(bindings, env):
     # BEGIN PROBLEM 14
     while bindings is not nil:
         bind_pair = bindings.first
-        validate_form(bind_pair, 2, 2)  # Checks the length of each binding pair is 2
+        # Checks the length of each binding pair is 2
+        validate_form(bind_pair, 2, 2)
         names = Pair(bind_pair.first, names)
         # Evaluate the value expression before add it into values
         values = Pair(scheme_eval(bind_pair.rest.first, env), values)
@@ -666,7 +671,8 @@ class Promise(object):
         if self.expression is not None:
             value = scheme_eval(self.expression, self.env)
             if not (value is nil or isinstance(value, Pair)):
-                raise SchemeError("result of forcing a promise should be a pair or nil, but was %s" % value)
+                raise SchemeError(
+                    "result of forcing a promise should be a pair or nil, but was %s" % value)
             self.value = value
             self.expression = None
         return self.value
