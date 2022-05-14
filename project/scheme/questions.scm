@@ -3,8 +3,6 @@
 (define (cdar x) (cdr (car x)))
 (define (cddr x) (cdr (cdr x)))
 
-; Some utility functions that you may find useful to implement.
-
 ; Helper function: takes in an element FIRST and a list of lists RESTS,
 ; adds first to the beginning of each list in RESTS
 (define (cons-all first rests)
@@ -12,6 +10,7 @@
     (lambda (x) (append (list first) x)) ; an one-argument function
     rests)) ; a list
 
+; Turn ((a 1) (b 2) (c 3)) into ((a b c) (1 2 3))
 (define (zip pairs)
   (define (zip_helper pairs firsts seconds)
     (if (null? pairs)
