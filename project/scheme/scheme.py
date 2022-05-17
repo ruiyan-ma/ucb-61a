@@ -42,7 +42,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         validate_procedure(procedure)
         # Evaluate each operand: the map method of Pair returns a new Scheme list
         # constructed by applying a one-argument function to every item in a Scheme list.
-        operands = rest.map(lambda arg: scheme_eval(arg, env))
+        operands = rest.map(lambda operand: scheme_eval(operand, env))
         # Apply the procedure and return the result
         return scheme_apply(procedure, operands, env)
         # END PROBLEM 4
