@@ -1,7 +1,6 @@
 SOURCE_FILE = __file__
 
 
-
 def in_order_traversal(t):
     """
     Generator function that generates an "in-order" traversal, in which we
@@ -19,7 +18,18 @@ def in_order_traversal(t):
     >>> list(in_order_traversal(t))
     [4, 2, 6, 5, 7, 1, 3]
     """
-    "*** YOUR CODE HERE ***"
+    ans = []
+
+    def traverse(t):
+        if t.is_leaf():
+            ans.append(t.label)
+        else:
+            traverse(t.branches[0])
+            ans.append(t.label)
+            traverse(t.branches[1])
+
+    traverse(t)
+    return ans
 
 
 def summation(n, term):
@@ -33,6 +43,7 @@ def summation(n, term):
         total, k = total + term(k), k + 1
     return total
 
+
 def interleaved_sum(n, odd_term, even_term):
     """Compute the sum odd_term(1) + even_term(2) + odd_term(3) + ..., up
     to n.
@@ -44,7 +55,15 @@ def interleaved_sum(n, odd_term, even_term):
     >>> check(SOURCE_FILE, 'interleaved_sum', ['While', 'For', 'Mod']) # ban loops and %
     True
     """
-    "*** YOUR CODE HERE ***"
+    def consume(num, odd):
+        if num > n:
+            return 0
+        elif odd == 1:
+            return odd_term(num) + consume(num + 1, 1 - odd)
+        else:
+            return even_term(num) + consume(num + 1, 1 - odd)
+
+    return consume(1, 1)
 
 
 def mutate_reverse(link):
@@ -60,7 +79,17 @@ def mutate_reverse(link):
     >>> link
     Link(3, Link(2, Link(1)))
     """
-    "*** YOUR CODE HERE ***"
+    labels = []
+    p = link
+    # record all labels
+    while p is not Link.empty:
+        labels.append(p.first)
+        p = p.rest
+    # change labels
+    p = link
+    while p is not Link.empty:
+        p.first = labels.pop()
+        p = p.rest
 
 
 class Tree:
@@ -73,6 +102,7 @@ class Tree:
     >>> t.branches[1].is_leaf()
     True
     """
+
     def __init__(self, label, branches=[]):
         for b in branches:
             assert isinstance(b, Tree)
@@ -178,4 +208,3 @@ class Link:
             string += str(self.first) + ' '
             self = self.rest
         return string + str(self.first) + '>'
-
