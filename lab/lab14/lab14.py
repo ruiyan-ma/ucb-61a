@@ -14,13 +14,18 @@ def prune_min(t):
     >>> t3
     Tree(6, [Tree(3, [Tree(1)])])
     """
-    "*** YOUR CODE HERE ***"
+    if not t.is_leaf():
+        if t.branches[0].label < t.branches[1].label:
+            t.branches.pop()
+        else:
+            t.branches.pop(0)
+        prune_min(t.branches[0])
 
 
 def align_skeleton(skeleton, code):
     """
     Aligns the given skeleton with the given code, minimizing the edit distance between
-    the two. Both skeleton and code are assumed to be valid one-line strings of code. 
+    the two. Both skeleton and code are assumed to be valid one-line strings of code.
 
     >>> align_skeleton(skeleton="", code="")
     ''
@@ -50,32 +55,45 @@ def align_skeleton(skeleton, code):
             match: the sequence of corrections as a string
             cost: the cost of the corrections, in edits
         """
+        # Base case: skeleton and code ends
         if skeleton_idx == len(skeleton) and code_idx == len(code):
-            return _________, ______________
+            return "", 0
+        # Base case: code ends
         if skeleton_idx < len(skeleton) and code_idx == len(code):
             edits = "".join(["-[" + c + "]" for c in skeleton[skeleton_idx:]])
-            return _________, ______________
+            return edits, len(skeleton) - skeleton_idx
+        # Base case: skeleton ends
         if skeleton_idx == len(skeleton) and code_idx < len(code):
             edits = "".join(["+[" + c + "]" for c in code[code_idx:]])
-            return _________, ______________
-        
+            return edits, len(code) - code_idx
+
+        # Recursive case: math, insert or delete
         possibilities = []
         skel_char, code_char = skeleton[skeleton_idx], code[code_idx]
+
         # Match
         if skel_char == code_char:
-            _________________________________________
-            _________________________________________
-            possibilities.append((_______, ______))
-        # Insert
-        _________________________________________
-        _________________________________________
-        possibilities.append((_______, ______))
-        # Delete
-        _________________________________________
-        _________________________________________
-        possibilities.append((_______, ______))
+            edits, cost = helper_align(skeleton_idx + 1, code_idx + 1)
+            # add the current character
+            possibilities.append((skeleton[skeleton_idx] + edits, cost))
+
+        # Insert a letter to the skeleton code
+        edits, cost = helper_align(skeleton_idx, code_idx + 1)
+        # add the current character to edits
+        edits = "+[" + code[code_idx] + "]" + edits
+        # add cost by 1
+        possibilities.append((edits, cost + 1))
+
+        # Delete a letter from the skeleton code
+        edits, cost = helper_align(skeleton_idx + 1, code_idx)
+        # add the current character to edit thet
+        edits = "-[" + skeleton[skeleton_idx] + "]" + edits
+        # add cost by 1
+        possibilities.append((edits, cost + 1))
+
         return min(possibilities, key=lambda x: x[1])
-    result, cost = ________________________
+
+    result, cost = helper_align(0, 0)
     return result
 
 
@@ -92,7 +110,24 @@ def num_splits(s, d):
     >>> num_splits([1, 4, 6, 8, 2, 9, 5], 3)
     12
     """
-    "*** YOUR CODE HERE ***"
+    count = 0
+
+    def split(s, sum1, sum2):
+        nonlocal count
+        # base case: s is empty
+        if not s:
+            if abs(sum1 - sum2) <= d:
+                count += 1
+            return
+
+        # add s[0] to sum1
+        split(s[1:], sum1 + s[0], sum2)
+
+        # add s[0] to sum2
+        split(s[1:], sum1, sum2 + s[0])
+
+    split(s, 0, 0)
+    return count // 2
 
 
 def insert(link, value, index):
@@ -110,15 +145,14 @@ def insert(link, value, index):
     >>> insert(link, 4, 5)
     IndexError
     """
-    if ____________________:
-        ____________________
-        ____________________
-        ____________________
-    elif ____________________:
-        ____________________
+    if index == 0:
+        copy = Link(link.first, link.rest)
+        link.first = value
+        link.rest = copy
+    elif link.rest is Link.empty:
+        raise IndexError
     else:
-        ____________________
-
+        insert(link.rest, value, index - 1)
 
 
 class Tree:
@@ -131,6 +165,7 @@ class Tree:
     >>> t.branches[1].is_leaf()
     True
     """
+
     def __init__(self, label, branches=[]):
         for b in branches:
             assert isinstance(b, Tree)
@@ -236,4 +271,3 @@ class Link:
             string += str(self.first) + ' '
             self = self.rest
         return string + str(self.first) + '>'
-
