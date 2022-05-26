@@ -176,6 +176,7 @@ def read_tail(src):
             # END PROBLEM 1
         else:
             # BEGIN PROBLEM 1
+            # (+ 2 3) -> Pair(+, Pair(2, Pair(3, nil)))
             # Read the next complete expression in the buffer
             first = scheme_read(src)
             # Read the rest of the combination until the matching closing parenthesis

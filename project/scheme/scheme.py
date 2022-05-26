@@ -38,8 +38,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         # BEGIN PROBLEM 4
         # Evaluate a call expression
         procedure = scheme_eval(first, env)  # an instance of Procedure
-        # validate that the operator is a procedure
-        validate_procedure(procedure)
+        validate_procedure(procedure)  # validate that the operator is a procedure
         # Evaluate each operand: the map method of Pair returns a new Scheme list
         # constructed by applying a one-argument function to every item in a Scheme list.
         operands = rest.map(lambda operand: scheme_eval(operand, env))
@@ -87,6 +86,7 @@ def eval_all(expressions, env):
     while expressions.rest is not nil:
         scheme_eval(expressions.first, env)
         expressions = expressions.rest
+    # Return the last sub-expression
     return scheme_eval(expressions.first, env)
     # END PROBLEM 7
 
@@ -141,7 +141,9 @@ class Frame(object):
         if len(formals) != len(vals):
             raise SchemeError("The number of argument values does not match with "
                               "the number of formal parameters.")
+        # Create a new Frame instance, the parent of which is self
         new_frame = Frame(self)
+        # Bind each formal parameter to its corresponding argument value
         while formals is not nil:
             new_frame.define(formals.first, vals.first)
             formals, vals = formals.rest, vals.rest
@@ -292,8 +294,8 @@ def do_define_form(expressions, env):
         # Define a procedure
         # BEGIN PROBLEM 9
         name = target.first
-        procedure_exp = Pair(target.rest, expressions.rest)
-        procedure = do_lambda_form(procedure_exp, env)
+        procedure_exp = Pair(target.rest, expressions.rest)  # Pair(formals, body)
+        procedure = do_lambda_form(procedure_exp, env)  # Return a lambda procedure
         env.define(name, procedure)
         return name
         # END PROBLEM 9
@@ -342,8 +344,7 @@ def do_lambda_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 8
     # EXPRESSIONS => (formals body)
-    # Bind formals and body expressions to the lambda procedure without evaluating them.
-    # Evaluate them when this procedure is called.
+    # Bind formals and body expressions to a lambda procedure without evaluating them.
     return LambdaProcedure(formals, expressions.rest, env)
     # END PROBLEM 8
 
@@ -483,14 +484,18 @@ def make_let_frame(bindings, env):
         raise SchemeError('bad bindings list in let form')
     names, values = nil, nil
     # BEGIN PROBLEM 14
+    # Extract bindings into names and values
     while bindings is not nil:
         bind_pair = bindings.first
         # Checks the length of each binding pair is 2
         validate_form(bind_pair, 2, 2)
+        # Add new name into names
         names = Pair(bind_pair.first, names)
         # Evaluate the value expression before add it into values
         values = Pair(scheme_eval(bind_pair.rest.first, env), values)
+        # Move to the next binding
         bindings = bindings.rest
+    # Validates that each symbol is distinct
     validate_formals(names)
     # END PROBLEM 14
     return env.make_child_frame(names, values)
@@ -648,7 +653,6 @@ def do_mu_form(expressions, env):
     # BEGIN PROBLEM 15
     # EXPRESSIONS => (formals body)
     # Bind formals and body expressions to the mu procedure without evaluating them.
-    # Evaluate them when this procedure is called.
     return MuProcedure(formals, expressions.rest)
     # END PROBLEM 15
 
