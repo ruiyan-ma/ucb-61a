@@ -1,3 +1,7 @@
-# 61a
+# ucb-61a
 
-2020 Summer CS61A from UC Berkeley
+Course website: https://inst.eecs.berkeley.edu/~cs61a/fa20/
+
+Textbook: http://composingprograms.com/
+
+All labs and projects are finished.
